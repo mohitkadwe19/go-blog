@@ -2,6 +2,7 @@ package main
 
 import (
 	"Blog/config"
+	"fmt"
 	"log"
 	"net/http"
 	"os"
@@ -10,13 +11,23 @@ import (
 	"Blog/router"
 
 	"github.com/gin-gonic/gin"
+	"github.com/joho/godotenv"
 )
 
 const defaultPort = "8080"
 
 func main() {
 
-	port := os.Getenv("PORT")
+	// load .env file
+	err := godotenv.Load(".env")
+
+	if err != nil {
+		log.Fatalf("Error loading .env file")
+	}
+
+	port := os.Getenv("PORT_ENV")
+
+	fmt.Println("port : ", port)
 	if port == "" {
 		port = defaultPort
 	}

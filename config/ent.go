@@ -4,7 +4,9 @@ import (
 	"Blog/ent"
 	"database/sql"
 	"log"
+	"os"
 
+	"github.com/joho/godotenv"
 	_ "github.com/lib/pq"
 )
 
@@ -22,7 +24,20 @@ func GetClient() *ent.Client {
 
 func NewEntClient() (*ent.Client, error) {
 
-	client, err := sql.Open("postgres", "host=localhost port=5432 user=postgres dbname=Blog password=1234 sslmode=disable")
+	// load .env file
+	err := godotenv.Load(".env")
+
+	if err != nil {
+		log.Fatalf("Error loading .env file")
+	}
+
+	DB_DATABASE := os.Getenv("DB_DATABASE")
+	DB_USERNAME := os.Getenv("DB_USERNAME")
+	DB_PASSWORD := os.Getenv("DB_PASSWORD")
+	DB_HOST := os.Getenv("DB_HOST")
+	DB_PORT := os.Getenv("DB_PORT")
+
+	client, err := sql.Open("postgres", "host="+DB_HOST+" port="+DB_PORT+" user="+DB_USERNAME+" dbname="+DB_DATABASE+" password="+DB_PASSWORD+" sslmode=disable")
 
 	if err != nil {
 		log.Fatalf("failed opening connection to postgres: %v", err)
@@ -33,5 +48,5 @@ func NewEntClient() (*ent.Client, error) {
 		log.Fatalf("failed opening connection to postgres: %v", err)
 	}
 
-	return ent.Open("postgres", "host=localhost port=5432 user=postgres dbname=Blog password=1234 sslmode=disable")
+	return ent.Open("postgres", "host="+DB_HOST+" port="+DB_PORT+" user="+DB_USERNAME+" dbname="+DB_DATABASE+" password="+DB_PASSWORD+" sslmode=disable")
 }
